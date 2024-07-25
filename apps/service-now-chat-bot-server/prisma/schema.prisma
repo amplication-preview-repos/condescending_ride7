@@ -1,0 +1,56 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DB_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model ServiceRequest {
+  id          String                    @id @default(cuid())
+  createdAt   DateTime                  @default(now())
+  updatedAt   DateTime                  @updatedAt
+  requestId   String?
+  description String?
+  created     DateTime?
+  status      EnumServiceRequestStatus?
+}
+
+model ServiceItem {
+  id          String   @id @default(cuid())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  itemId      String?
+  name        String?
+  description String?
+  price       Float?
+  catalog     Catalog? @relation(fields: [catalogId], references: [id])
+  catalogId   String?
+}
+
+model Catalog {
+  id           String        @id @default(cuid())
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  name         String?
+  description  String?
+  catalogId    String?
+  serviceItems ServiceItem[]
+}
+
+model User {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  firstName String?
+  lastName  String?
+  username  String   @unique
+  email     String?  @unique
+  password  String
+  roles     Json
+}
+
+enum EnumServiceRequestStatus {
+  Option1
+}
